@@ -1,0 +1,79 @@
+# 
+#  Universal TUN/TAP device driver.
+# 
+#  Multithreaded STREAMS tun pseudo device driver.
+# 
+#  Copyright (C) 1999-2000 Maxim Krasnyansky <max_mk@yahoo.com>
+# 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+# 
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  $Id: Makefile.in,v 1.7 2000/06/20 03:14:17 maxk Exp
+#
+
+# Modified by Kazuyoshi <admin2@whiteboard.ne.jp>
+# Modified for supporting Ethernet tunneling as known as TAP.
+# $Date: 2009/06/07 06:28:43 $, $Revision: 1.5 $
+
+CONFIGURE_FILES = Makefile config.status config.cache config.h config.log
+
+CC = @CC@
+LD = ld
+RM = rm
+
+DEFS = @DEFS@
+CFLAGS = $(DEFS) @CFLAGS@ -D_KERNEL -I.
+LD_FLAGS = @LD_OPT@
+
+ADD_DRV = /usr/sbin/add_drv
+REM_DRV = /usr/sbin/rem_drv
+DRV_DIR = @DRV_DIR@
+DRV_CONF_DIR = /usr/kernel/drv
+
+INSTALL = @INSTALL@
+
+all: tun tap
+
+tun: tun.o
+	$(LD) $(LD_FLAGS) -r -o tun tun.o
+tap: tap.o
+	$(LD) $(LD_FLAGS) -r -o tap tap.o
+
+tun.o: tun.c if_tun.h
+	$(CC) $(CFLAGS) -c tun.c -o tun.o -DTUNTAP_TUN
+
+tap.o: tun.c if_tun.h
+	$(CC) $(CFLAGS) -c tun.c -o tap.o -DTUNTAP_TAP
+
+install: tun tap
+	$(INSTALL) -d -m 0755 -o root -g bin $(DESTDIR)/usr/include/net
+	$(INSTALL) -d -m 0755 -o root -g sys $(DESTDIR)$(DRV_DIR)
+	$(INSTALL) -m 644 -o root -g root if_tun.h $(DESTDIR)/usr/include/net 
+	$(INSTALL) -m 644 -o root -g root tun $(DESTDIR)$(DRV_DIR)
+	$(INSTALL) -m 644 -o root -g root tap $(DESTDIR)$(DRV_DIR)
+	$(INSTALL) -m 644 -o root -g root tun.conf $(DESTDIR)$(DRV_CONF_DIR)
+	$(INSTALL) -m 644 -o root -g root tap.conf $(DESTDIR)$(DRV_CONF_DIR)
+	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tun >/dev/null 2>&1
+	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tap >/dev/null 2>&1
+	-[ -z "$(DESTDIR)" ]&& $(ADD_DRV) tun	
+	-[ -z "$(DESTDIR)" ]&& $(ADD_DRV) tap
+
+uninstall:
+	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tun >/dev/null 2>&1
+	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tap >/dev/null 2>&1
+	-[ -z "$(DESTDIR)" ]&& $(RM) $(DESTDIR)$(DRV_CONF_DIR)/tun.conf
+	-[ -z "$(DESTDIR)" ]&& $(RM) $(DESTDIR)$(DRV_CONF_DIR)/tap.conf
+	-[ -z "$(DESTDIR)" ]&& $(RM) $(DESTDIR)$(DRV_DIR)/tun
+	-[ -z "$(DESTDIR)" ]&& $(RM) $(DESTDIR)$(DRV_DIR)/tap
+clean:
+	rm -f tun tap *.o *~
+
+distclean:
+	rm -f $(CONFIGURE_FILES)

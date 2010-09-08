@@ -1,0 +1,87 @@
+dnl
+dnl  TUN - Universal TUN/TAP device driver.
+dnl  Copyright (C) 1999-2000 Maxim Krasnyansky <max_mk@yahoo.com>
+dnl
+dnl  This program is free software; you can redistribute it and/or modify
+dnl  it under the terms of the GNU General Public License as published by
+dnl  the Free Software Foundation; either version 2 of the License, or
+dnl  (at your option) any later version.
+dnl
+dnl  This program is distributed in the hope that it will be useful,
+dnl  but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+dnl  GNU General Public License for more details.
+dnl
+dnl  $Id: configure.in,v 1.3 2000/05/04 19:24:53 maxk Exp 
+dnl
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl Modified by Kazuyoshi <admin2@whiteboard.ne.jp>
+dnl Modified for supporting Ethernet tunneling as known as TAP.
+dnl $Date: 2009/09/14 07:43:20 $, $Revision: 1.11 $
+
+AC_INIT
+AC_PROG_CC
+AC_PROG_INSTALL
+
+AC_ARG_ENABLE([64bit],
+   [  --disable-64bit         disable build of 64-bit driver],
+[use_64bit="$enableval"],[use_64bit=yes])
+
+if test "$use_64bit" = "yes"
+then
+AC_CHECK_PROG(ISAINFO, isainfo, yes, no, /usr/bin)
+else
+ISAINFO=no
+fi
+if test "$ISAINFO" = "yes" -a "$use_64bit" = "yes";
+then 
+    KARCH=`/usr/bin/isainfo -k`
+else
+    KARCH=`uname -p`
+fi
+IS_GNU_LD=`ld --version 2>&1 | grep  GNU`
+if test "$GCC" = yes; then
+	CFLAGS="$CFLAGS -Wall"
+fi
+case $KARCH in
+     'sparc' | 'i386')
+	DRV_DIR="/usr/kernel/drv"
+	;;
+      'sparcv9')
+	CFLAGS="$CFLAGS -m64"
+	DRV_DIR="/usr/kernel/drv/sparcv9"
+	if test -n "$IS_GNU_LD";
+	then
+		LD_OPT="-melf64_sparc"
+	fi
+	;;
+      'amd64')
+	if test "$GCC" = yes; then
+		CFLAGS="$CFLAGS -m64 -mcmodel=kernel -mno-red-zone"
+	else
+		CFLAGS="$CFLAGS -m64 -xmodel=kernel"
+	fi
+	DRV_DIR="/usr/kernel/drv/amd64"
+	if test -n "$IS_GNU_LD";
+	then
+		LD_OPT="-melf_x86_64"
+	fi
+	;;
+esac
+REL="1.1"
+TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
+
+AC_ARG_ENABLE(debug,
+[  --enable-debug          Enable debuging],
+   AC_DEFINE(TUN_DEBUG, 1)
+)
+
+AC_DEFINE_UNQUOTED(TUN_VER, "$TUN_VER")
+AC_SUBST(CFLAGS)
+AC_SUBST(LD_OPT)
+AC_SUBST(DRV_DIR)
+AC_SUBST(CC)
+
+AC_OUTPUT(Makefile)
+
