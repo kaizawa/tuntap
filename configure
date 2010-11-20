@@ -2756,7 +2756,7 @@ case $KARCH in
 	fi
 	;;
 esac
-REL="1.1"
+REL="1.1.0"
 TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
 
 # Check whether --enable-debug was given.
@@ -2772,6 +2772,7 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define TUN_VER "$TUN_VER"
 _ACEOF
+
 
 
 

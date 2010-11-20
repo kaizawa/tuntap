@@ -36,6 +36,7 @@ ADD_DRV = /usr/sbin/add_drv
 REM_DRV = /usr/sbin/rem_drv
 DRV_DIR = @DRV_DIR@
 DRV_CONF_DIR = /usr/kernel/drv
+DESTDIR = @prefix@
 
 INSTALL = @INSTALL@
 
