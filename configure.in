@@ -18,7 +18,6 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl Modified by Kazuyoshi <admin2@whiteboard.ne.jp>
 dnl Modified for supporting Ethernet tunneling as known as TAP.
-dnl $Date: 2009/09/14 07:43:20 $, $Revision: 1.11 $
 
 AC_INIT
 AC_PROG_CC
