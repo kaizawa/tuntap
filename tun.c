@@ -142,8 +142,7 @@ static	struct dev_ops tun_ops = {
   nodev,		/* devo_reset */
   &tun_cb_ops,		/* devo_cb_ops */
   (struct bus_ops *)NULL,/* devo_bus_ops */
-  NULL,		         /* devo_power */
-  ddi_quiesce_not_needed  
+  NULL		         /* devo_power */
 };
 
 static struct modldrv modldrv = {
@@ -229,7 +228,11 @@ static int tundetach(dev_info_t *dev, ddi_detach_cmd_t cmd)
      ddi_prop_remove_all(dev);
      ddi_remove_minor_node(dev, NULL);
      return (DDI_SUCCESS);
-  } else if( (cmd == DDI_SUSPEND) || (cmd == DDI_PM_SUSPEND) ){
+  } else if( (cmd == DDI_SUSPEND)
+#ifdef SOL11             
+             || (cmd == DDI_PM_SUSPEND)
+#endif /* ifdef SOL11 */
+             ){
      return (DDI_SUCCESS);
   } else
      return (DDI_FAILURE);
@@ -391,7 +394,7 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
 
         /* Reverted to original code */
         p = *(int *)mp->b_cont->b_rptr;
-        //p = -1;
+        /* p = -1; */
 
 	if( p < -1 || p > TUNMAXPPA){
            tuniocack(wq, mp, M_IOCNAK, 0, EINVAL);
