@@ -43,7 +43,7 @@ fi
 
 BUILD_NAME=`uname -v | cut -f 1 -d_`
 BUILD_NUMBER=`uname -v | cut -f 2 -d_`
-if test "$BUILD_NUMBER" -ge 148 ; then
+if test "$BUILD_NUMBER" -ge 173 ; then
         CFLAGS="$CFLAGS -DSOL11"
 fi
 
