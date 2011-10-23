@@ -229,7 +229,7 @@ static int tundetach(dev_info_t *dev, ddi_detach_cmd_t cmd)
      ddi_remove_minor_node(dev, NULL);
      return (DDI_SUCCESS);
   } else if( (cmd == DDI_SUSPEND)
-#ifdef SOL11             
+#ifndef SOL11             
              || (cmd == DDI_PM_SUSPEND)
 #endif /* ifdef SOL11 */
              ){
