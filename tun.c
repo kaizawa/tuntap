@@ -383,7 +383,7 @@ struct tunppa * tun_alloc_ppa(int id)
 static void tun_ioctl(queue_t *wq, mblk_t *mp)
 {
   struct iocblk *ioc = (struct iocblk *)mp->b_rptr;
-  struct tunstr *str = (struct tunstr *)wq->q_ptr;
+  struct tunstr *str = (struct tunstr *)wq->q_ptr, *tmp, **prev;
   struct tunppa *ppa;
   int p;
 
@@ -417,6 +417,19 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
 	str->ppa = ppa;
  	str->flags |= TUN_CONTROL;
 
+        /* for reopen. here*/
+        str->id = ppa->id;
+        /* for reopen. Check existing stream list,
+           and link these streams to this ppa */
+        for(prev = &tun_str; (tmp = *prev); prev = &tmp->s_next){
+            if(tmp->ppa == NULL && tmp->id == ppa->id){
+                tmp->ppa = ppa;
+                tmp->p_next = ppa->p_str;
+                ppa->p_str = tmp;                
+                cmn_err(CE_CONT,"tun: set new PPA %d to str %p\n", ppa->id, tmp);
+            }
+        }
+
         tuniocack(wq, mp, M_IOCACK, ppa->id, 0);
 
   	DBG(CE_CONT,"tun: new PPA %d control str %p\n", ppa->id, str);
@@ -438,6 +451,9 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
 	ppa->p_str  = str;
 
 	str->ppa = ppa;
+
+        /* for reopen */
+        str->id = ppa->id;        
 
         tuniocack(wq, mp, M_IOCACK, p, 0);
 

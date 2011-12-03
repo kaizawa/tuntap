@@ -59,6 +59,7 @@ struct tunstr {
   u_long state;			/* DL state */
   u_long sap;			/* bound sap */
   u_long minor;			/* minor device number */
+  unsigned int id;              /* Iface number, for reopen */     
 };
 
 /* Flags */

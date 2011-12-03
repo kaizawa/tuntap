@@ -77,7 +77,7 @@ case $KARCH in
 	fi
 	;;
 esac
-REL="1.2.0"
+REL="1.2.0b"
 TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
 
 AC_ARG_ENABLE(debug,
