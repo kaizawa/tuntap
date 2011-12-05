@@ -2861,7 +2861,9 @@ fi
 
 IS_GNU_LD=`ld --version 2>&1 | grep  GNU`
 if test "$GCC" = yes; then
-	CFLAGS="$CFLAGS -Wall"
+        GCC_VERSION=`gcc -v 2>&1 |grep "gcc version" | awk '{print $3}'`
+        GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -f 1 -d .`
+        GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -f 2 -d .`
 fi
 case $KARCH in
      'sparc' | 'i386')
@@ -2877,7 +2879,13 @@ case $KARCH in
 	;;
       'amd64')
 	if test "$GCC" = yes; then
-		CFLAGS="$CFLAGS -m64 -mcmodel=kernel -mno-red-zone"
+                if test "$GCC_MAJOR_VERSION" -ge 4 \
+	           -a "$MINOR_VERSION" -ge 5 ; then
+                    CFLAGS="$CFLAGS -m64 -mcmodel=large -mno-red-zone"
+                else
+                    CFLAGS="$CFLAGS -m64 -mcmodel=kernel -mno-red-zone"
+                fi
+
 	else
 		CFLAGS="$CFLAGS -m64 -xmodel=kernel"
 	fi
@@ -2888,7 +2896,7 @@ case $KARCH in
 	fi
 	;;
 esac
-REL="1.2.0"
+REL="1.2.2"
 TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
 
 # Check whether --enable-debug was given.
