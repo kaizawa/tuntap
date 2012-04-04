@@ -75,6 +75,7 @@ uninstall:
 	-[ -z "$(DESTDIR)" ]&& $(RM) $(DESTDIR)$(DRV_DIR)/tap
 clean:
 	rm -f tun tap *.o *~
+	rm -f tun tun *.o *~
 
 distclean:
 	rm -f $(CONFIGURE_FILES)
