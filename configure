@@ -603,6 +603,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 DRV_DIR
 LD_OPT
+KCFLAGS
 ISAINFO
 INSTALL_DATA
 INSTALL_SCRIPT
@@ -2802,9 +2803,8 @@ else
 fi
 
 
-if test "$use_64bit" = "yes"
-then
-# Extract the first word of "isainfo", so it can be a program name with args.
+if test "$use_64bit" = "yes" ; then
+   # Extract the first word of "isainfo", so it can be a program name with args.
 set dummy isainfo; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
@@ -2843,13 +2843,23 @@ fi
 
 
 else
-ISAINFO=no
+   ISAINFO=no
 fi
+
 if test "$ISAINFO" = "yes" -a "$use_64bit" = "yes";
 then
     KARCH=`/usr/bin/isainfo -k`
 else
     KARCH=`uname -p`
+fi
+
+IS_GNU_LD=`ld --version 2>&1 | grep  GNU`
+
+if test "$GCC" = yes; then
+        GCC_VERSION=`gcc -v 2>&1 |grep "gcc version" | awk '{print $3}'`
+	PTHREAD_CFLAGS="-pthreads"
+        GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -f 1 -d .`
+        GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -f 2 -d .`
 fi
 
 MAJOR_VERSION=`uname -r | cut -f 1 -d.`
@@ -2859,18 +2869,15 @@ if test "$MAJOR_VERSION" -ge 5 \
         CFLAGS="$CFLAGS -DSOL11"
 fi
 
-IS_GNU_LD=`ld --version 2>&1 | grep  GNU`
-if test "$GCC" = yes; then
-        GCC_VERSION=`gcc -v 2>&1 |grep "gcc version" | awk '{print $3}'`
-        GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -f 1 -d .`
-        GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -f 2 -d .`
-fi
+KCFLAGS="$CFLAGS $KCFLAGS -D_KERNEL -I."
+
 case $KARCH in
      'sparc' | 'i386')
 	DRV_DIR="/usr/kernel/drv"
 	;;
       'sparcv9')
 	CFLAGS="$CFLAGS -m64"
+	KCFLAGS="$KCFLAGS -m64"
 	DRV_DIR="/usr/kernel/drv/sparcv9"
 	if test -n "$IS_GNU_LD";
 	then
@@ -2878,16 +2885,17 @@ case $KARCH in
 	fi
 	;;
       'amd64')
+	CFLAGS="$CFLAGS -m64"
 	if test "$GCC" = yes; then
                 if test "$GCC_MAJOR_VERSION" -ge 4 \
 	           -a "$MINOR_VERSION" -ge 5 ; then
-                    CFLAGS="$CFLAGS -m64 -mcmodel=large -mno-red-zone"
+                    KCFLAGS="$KCFLAGS -m64 -mcmodel=large -mno-red-zone"
                 else
-                    CFLAGS="$CFLAGS -m64 -mcmodel=kernel -mno-red-zone"
+                    KCFLAGS="$KCFLAGS -m64 -mcmodel=kernel -mno-red-zone"
                 fi
 
 	else
-		CFLAGS="$CFLAGS -m64 -xmodel=kernel"
+		KCFLAGS="$KCFLAGS -m64 -xmodel=kernel"
 	fi
 	DRV_DIR="/usr/kernel/drv/amd64"
 	if test -n "$IS_GNU_LD";
@@ -2896,7 +2904,7 @@ case $KARCH in
 	fi
 	;;
 esac
-REL="1.2.2"
+REL="1.2.4"
 TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
 
 # Check whether --enable-debug was given.
@@ -2912,6 +2920,7 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define TUN_VER "$TUN_VER"
 _ACEOF
+
 
 
 

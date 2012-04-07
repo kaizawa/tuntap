@@ -20,7 +20,6 @@
 
 # Modified by Kazuyoshi <admin2@whiteboard.ne.jp>
 # Modified for supporting Ethernet tunneling as known as TAP.
-# $Date: 2009/06/07 06:28:43 $, $Revision: 1.5 $
 
 CONFIGURE_FILES = Makefile config.status config.cache config.h config.log
 
@@ -29,7 +28,8 @@ LD = ld
 RM = rm
 
 DEFS = @DEFS@
-CFLAGS = $(DEFS) @CFLAGS@ -D_KERNEL -I.
+CFLAGS = $(DEFS) @CFLAGS@
+KCFLAGS = $(DEFS) @KCFLAGS@
 LD_FLAGS = @LD_OPT@
 
 ADD_DRV = /usr/sbin/add_drv
@@ -48,10 +48,10 @@ tap: tap.o
 	$(LD) $(LD_FLAGS) -r -o tap tap.o
 
 tun.o: tun.c if_tun.h
-	$(CC) $(CFLAGS) -c tun.c -o tun.o -DTUNTAP_TUN
+	$(CC) $(KCFLAGS) -c tun.c -o tun.o -DTUNTAP_TUN
 
 tap.o: tun.c if_tun.h
-	$(CC) $(CFLAGS) -c tun.c -o tap.o -DTUNTAP_TAP
+	$(CC) $(KCFLAGS) -c tun.c -o tap.o -DTUNTAP_TAP
 
 install: tun tap
 	$(INSTALL) -d -m 0755 -o root -g bin $(DESTDIR)/usr/include/net

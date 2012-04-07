@@ -147,7 +147,7 @@ static	struct dev_ops tun_ops = {
 
 static struct modldrv modldrv = {
   &mod_driverops,	/* Type of module(driver) */
-  "TUN/TAP driver for Solaris "TUN_VER,
+  "TUN/TAP driver "TUN_VER,
   &tun_ops		/* driver ops */
 };
 
