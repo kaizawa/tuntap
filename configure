@@ -2854,9 +2854,12 @@ fi
 
 MAJOR_VERSION=`uname -r | cut -f 1 -d.`
 MINOR_VERSION=`uname -r | cut -f 2 -d.`
-if test "$MAJOR_VERSION" -ge 5 \
-	-a "$MINOR_VERSION" -ge 11 ; then
+if test "$MAJOR_VERSION" -ge 5 ; then
+   if test "$MINOR_VERSION" -ge 11 ;  then
         CFLAGS="$CFLAGS -DSOL11"
+   elif test "$MINOR_VERSION" -eq 6 ; then
+        CFLAGS="$CFLAGS -DSOL2_6"
+   fi
 fi
 
 IS_GNU_LD=`ld --version 2>&1 | grep  GNU`
@@ -2885,7 +2888,6 @@ case $KARCH in
                 else
                     CFLAGS="$CFLAGS -m64 -mcmodel=kernel -mno-red-zone"
                 fi
-
 	else
 		CFLAGS="$CFLAGS -m64 -xmodel=kernel"
 	fi
@@ -4036,5 +4038,3 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:$LINENO: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
-
