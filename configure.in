@@ -19,7 +19,7 @@ dnl
 dnl Modified by Kazuyoshi Aizawa <admin2@whiteboard.ne.jp>
 dnl Modified for supporting Ethernet tunneling as known as TAP.
 
-AC_INIT
+AC_INIT([tuntap], [1.2.5], [admin2@whiteboard.ne.jp])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PREFIX_DEFAULT
@@ -92,8 +92,8 @@ case $KARCH in
 	fi
 	;;
 esac
-REL="1.2.4"
-TUN_VER="$REL `date '+%m/%d/%Y'`"; export TUN_VER
+
+TUN_VER="$PACKAGE_VERSION `date '+%m/%d/%Y'`"; export TUN_VER
 
 AC_ARG_ENABLE(debug,
 [  --enable-debug          Enable debuging],
