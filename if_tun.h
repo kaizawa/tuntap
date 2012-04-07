@@ -90,4 +90,9 @@ struct tundladdr {
 #define TUNNEWPPA	(('T'<<16) | 0x0001)
 #define TUNSETPPA	(('T'<<16) | 0x0002)
 
+/* for Solaris 6 */
+#ifdef SOL2_6
+#define	ETHERTYPE_IPV6		(0x86dd)	/* IPv6 */
+#endif
+
 #endif	/* _SYS_IF_TUN_H */
