@@ -1220,8 +1220,7 @@ static int tun_msg_len(mblk_t *mp)
  *****************************************************************************/
 static void tun_generate_mac_addr()
 {
-#ifdef SOL11 
-//#ifdef SOL2_6
+#ifdef SOL2_6
     time_t tm;
     clock_t lb;
      
