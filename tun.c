@@ -1220,13 +1220,21 @@ static int tun_msg_len(mblk_t *mp)
  *****************************************************************************/
 static void tun_generate_mac_addr()
 {
+#ifdef SOL11 
+//#ifdef SOL2_6
+    time_t tm;
+    clock_t lb;
+     
+    drv_getparm(TIME, (void *)&tm);
+    drv_getparm(LBOLT, (void *)&lb);
+#else
     uint_t  tm;
     uint_t  lb;
 
     /* Get time and lbolt to generate last 3 octet of mac address */
     tm =  (uint_t)ddi_get_time();
     lb =  (uint_t)ddi_get_lbolt();
-
+#endif
     /* Set U/L bit to 1(=local) */
     localmacaddr.ether_addr_octet[0] = 0x0a;
     localmacaddr.ether_addr_octet[1] = 0x00;
