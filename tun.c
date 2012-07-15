@@ -386,6 +386,8 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
   struct tunstr *str = (struct tunstr *)wq->q_ptr;
   struct tunppa *ppa;
   int p;
+  mblk_t *mopt;
+  struct stroptions *sop;
 
   DBG(CE_CONT,"tun: tun_ioctl 0x%x\n", ioc->ioc_cmd);
   switch( ioc->ioc_cmd ){
@@ -413,6 +415,22 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
 
 	/* Control Stream RQ */
   	ppa->rq = str->rq;
+
+        /* Set High Water Mark of Stream head */
+        /*
+	(void) strqset(ppa->rq->q_next, QHIWAT,  0, 1000*1024);
+        cmn_err(CE_CONT, "Set QHIWAT of stream head read queue(0x%p) to 1024*1024", ppa->rq->q_next);
+        */
+        if( !(mopt = allocb(sizeof(struct stroptions), BPRI_LO)) ){
+            tuniocack(wq, mp, M_IOCNAK, 0, ENOMEM);
+            return;
+        }
+        mopt->b_datap->db_type = M_SETOPTS;
+        mopt->b_wptr += sizeof(struct stroptions);
+        sop = (struct stroptions *)(void *)mopt->b_rptr;
+        sop->so_flags = SO_HIWAT;
+        sop->so_hiwat = TUN_SO_HIWAT;
+        putnext(ppa->rq, mopt);        
 
 	str->ppa = ppa;
  	str->flags |= TUN_CONTROL;

@@ -84,6 +84,8 @@ struct tundladdr {
 #define TUN_QUEUE	0
 #define TUN_DROP	1
 
+#define TUN_SO_HIWAT    1024*1024
+
 #endif /* _KERNEL */
 
 /* IOCTL defines */
