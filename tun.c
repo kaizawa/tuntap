@@ -417,10 +417,6 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
   	ppa->rq = str->rq;
 
         /* Set High Water Mark of Stream head */
-        /*
-	(void) strqset(ppa->rq->q_next, QHIWAT,  0, 1000*1024);
-        cmn_err(CE_CONT, "Set QHIWAT of stream head read queue(0x%p) to 1024*1024", ppa->rq->q_next);
-        */
         if( !(mopt = allocb(sizeof(struct stroptions), BPRI_LO)) ){
             tuniocack(wq, mp, M_IOCNAK, 0, ENOMEM);
             return;
