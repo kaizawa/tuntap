@@ -416,7 +416,7 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
 	/* Control Stream RQ */
   	ppa->rq = str->rq;
 
-        /* Set High Water Mark of Stream head */
+        /* Set High Water Mark of STREAM head */
         if( !(mopt = allocb(sizeof(struct stroptions), BPRI_LO)) ){
             tuniocack(wq, mp, M_IOCNAK, 0, ENOMEM);
             return;
