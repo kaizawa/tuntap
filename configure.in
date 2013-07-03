@@ -48,6 +48,7 @@ if test "$GCC" = yes; then
 	PTHREAD_CFLAGS="-pthreads"
         GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -f 1 -d .`
         GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -f 2 -d .`
+        CFLAGS="$CFLAGS -Wall"
 fi
 
 MAJOR_VERSION=`uname -r | cut -f 1 -d.`
@@ -88,7 +89,7 @@ case $KARCH in
 	DRV_DIR="/usr/kernel/drv/amd64"
 	if test -n "$IS_GNU_LD";
 	then
-		LD_OPT="-melf_x86_64"
+		LD_OPT="-melf_x86_64_sol2"
 	fi
 	;;
 esac
