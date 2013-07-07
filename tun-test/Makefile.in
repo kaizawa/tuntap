@@ -1,0 +1,43 @@
+#
+# Makefile for tuntap driver test tools
+#
+CONFIGURE_FILES = Makefile config.status config.cache config.h config.log
+
+CC = @CC@
+LD = ld
+RM = rm
+
+DEFS = @DEFS@
+CFLAGS = $(DEFS) @CFLAGS@
+KCFLAGS = $(DEFS) @KCFLAGS@
+LD_FLAGS = @LD_OPT@
+
+ADD_DRV = /usr/sbin/add_drv
+REM_DRV = /usr/sbin/rem_drv
+DRV_DIR = @DRV_DIR@
+DRV_CONF_DIR = /usr/kernel/drv
+DESTDIR = @prefix@
+
+INSTALL = @INSTALL@
+
+all: tunctl 
+
+tunctl: tunctl.c ../if_tun.h
+	$(CC) $(CFLAGS) -I../ tunctl.c -o tunctl
+
+install: all
+	$(INSTALL) -d $(BINDIR)
+	$(INSTALL) -m 755 -o root -g root tunctl $(BINDIR)
+
+uninstall:
+	rm $(BINDIR)/tunctl
+
+clean: 
+	rm -f tunctl *.o *~
+
+distclean:
+	rm -f $(CONFIGURE_FILES)
+
+test: tunctl
+	./test.sh nobuild
+

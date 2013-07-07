@@ -79,3 +79,6 @@ clean:
 
 distclean:
 	rm -f $(CONFIGURE_FILES)
+
+test:
+	cd tun-test ; make test 

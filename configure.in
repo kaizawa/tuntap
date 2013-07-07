@@ -19,7 +19,7 @@ dnl
 dnl Modified by Kazuyoshi Aizawa <admin2@whiteboard.ne.jp>
 dnl Modified for supporting Ethernet tunneling as known as TAP.
 
-AC_INIT([tuntap], [1.3.0], [admin2@whiteboard.ne.jp])
+AC_INIT([tuntap], [1.3.2], [admin2@whiteboard.ne.jp])
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PREFIX_DEFAULT
@@ -109,5 +109,5 @@ AC_SUBST(DRV_DIR)
 AC_SUBST(prefix)
 AC_SUBST(CC)
 
-AC_OUTPUT(Makefile)
-
+AC_CONFIG_FILES([Makefile tun-test/Makefile])
+AC_OUTPUT
