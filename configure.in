@@ -109,5 +109,5 @@ AC_SUBST(DRV_DIR)
 AC_SUBST(prefix)
 AC_SUBST(CC)
 
-AC_OUTPUT(Makefile)
-
+AC_CONFIG_FILES([Makefile tun-test/Makefile])
+AC_OUTPUT

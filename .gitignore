@@ -6,3 +6,7 @@ tap
 tap.o
 tun
 tun.o
+logs/
+tun-test/logs/
+tun-test/test
+tun-test/tunctl
