@@ -166,7 +166,7 @@ static struct tunstr *tun_str;
 
 int _init(void)
 {
-  cmn_err(CE_CONT, "Universal TUN/TAP device driver ver %s "
+  cmn_err(CE_CONT, "?Universal TUN/TAP device driver ver %s "
 		   "(C) 1999-2000 Maxim Krasnyansky\n", TUN_VER);
 
   DBG(CE_CONT,"tun: _init\n");
