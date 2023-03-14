@@ -458,6 +458,15 @@ static void tun_ioctl(queue_t *wq, mblk_t *mp)
   	DBG(CE_CONT,"tun: str %p attached to PPA %d \n", str, p);
         break;
 
+     case TUNGETPPA:
+	ppa = str->ppa;
+	if (str->ppa == NULL) {
+	   tuniocack(wq, mp, M_IOCNAK, 0, ENODEV);
+	   break;
+	}
+        tuniocack(wq, mp, M_IOCACK, ppa->id, 0);
+        break;
+
      case DLIOCRAW:          /* Raw M_DATA mode */
         str->flags |= TUN_RAW;
         tuniocack(wq, mp, M_IOCACK, 0, 0);
