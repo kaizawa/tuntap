@@ -91,5 +91,6 @@ struct tundladdr {
 /* IOCTL defines */
 #define TUNNEWPPA	(('T'<<16) | 0x0001)
 #define TUNSETPPA	(('T'<<16) | 0x0002)
+#define TUNGETPPA	(('T'<<16) | 0x0003)
 
 #endif	/* _SYS_IF_TUN_H */
