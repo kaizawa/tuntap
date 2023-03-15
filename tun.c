@@ -842,9 +842,6 @@ static void tun_promiscoff_req(queue_t *wq, mblk_t *mp)
 void tun_physaddr_req(queue_t *wq, mblk_t *mp)
 {
   union   DL_primitives   *dlp;
-#ifdef TUNTAP_TUN
-  struct  ether_addr addr;
-#endif
   int size;
   struct tunstr *str = (struct tunstr *)wq->q_ptr;
   struct tunppa *ppa = str->ppa;
@@ -872,7 +869,7 @@ void tun_physaddr_req(queue_t *wq, mblk_t *mp)
 #ifdef TUNTAP_TAP
   bcopy(&ppa->etheraddr, (caddr_t)(mp->b_rptr + sizeof(dl_phys_addr_ack_t)), ETHERADDRL);
 #elif defined(TUNTAP_TUN)
-  bcopy(&addr, (caddr_t)(mp->b_rptr + sizeof(dl_phys_addr_ack_t)), ETHERADDRL);
+  bzero((caddr_t)(mp->b_rptr + sizeof(dl_phys_addr_ack_t)), ETHERADDRL);
 #endif
   qreply(wq, mp);
 }
